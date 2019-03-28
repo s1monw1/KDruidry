@@ -6,6 +6,7 @@ import `in`.zapr.druid.druidry.dimension.SimpleDimension
 import `in`.zapr.druid.druidry.filter.SelectorFilter
 import `in`.zapr.druid.druidry.granularity.PredefinedGranularity
 import `in`.zapr.druid.druidry.postAggregator.ArithmeticFunction
+import `in`.zapr.druid.druidry.postAggregator.ArithmeticOrdering
 import `in`.zapr.druid.druidry.postAggregator.FieldAccessPostAggregator
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import de.swirtz.ktsrunner.kdruidry.dsl.arithmeticPostAggregator
@@ -15,17 +16,20 @@ import org.junit.jupiter.api.Test
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class DruidTopNQueryBuilderDSLTests{
+class DruidTopNQueryBuilderDSLTests {
 
     @Test
-    fun `topNQuery can be generated`(){
+    fun `topNQuery can be generated`() {
         val query = topNQuery {
             dataSource("sample_data")
             dimension(SimpleDimension("sample_dim"))
             threshold(5)
             simpleTopNMetric("count")
             simpleGranularity(PredefinedGranularity.ALL)
-            andFilter(SelectorFilter("dim1", "some_value"), SelectorFilter("dim2", "some_other_val"))
+            andFilter(
+                SelectorFilter("dim1", "some_value"),
+                SelectorFilter("dim2", "some_other_val")
+            )
             aggregators(
                 LongSumAggregator("count", "count"),
                 DoubleSumAggregator("some_metric", "some_metric")
@@ -35,11 +39,10 @@ class DruidTopNQueryBuilderDSLTests{
                     name("sample_divide")
                     function(ArithmeticFunction.DIVIDE)
                     fields(
-                        listOf(
-                            FieldAccessPostAggregator("some_metric", "some_metric"),
-                            FieldAccessPostAggregator("count", "count")
-                        )
+                        FieldAccessPostAggregator("some_metric", "some_metric"),
+                        FieldAccessPostAggregator("count", "count")
                     )
+                    ordering(ArithmeticOrdering.NUMERIC_FIRST)
                 }
             )
             intervals(
