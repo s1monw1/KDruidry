@@ -2,30 +2,24 @@ package de.swirtz.ktsrunner.kdruidry
 
 import `in`.zapr.druid.druidry.aggregator.DoubleSumAggregator
 import `in`.zapr.druid.druidry.aggregator.LongSumAggregator
-import `in`.zapr.druid.druidry.dimension.SimpleDimension
 import `in`.zapr.druid.druidry.filter.SelectorFilter
 import `in`.zapr.druid.druidry.granularity.PredefinedGranularity
 import `in`.zapr.druid.druidry.postAggregator.ArithmeticFunction
 import `in`.zapr.druid.druidry.postAggregator.ArithmeticOrdering
 import `in`.zapr.druid.druidry.postAggregator.FieldAccessPostAggregator
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import de.swirtz.ktsrunner.kdruidry.dsl.arithmeticPostAggregator
-import de.swirtz.ktsrunner.kdruidry.dsl.topNQuery
+import de.swirtz.ktsrunner.kdruidry.dsl.postaggregator.arithmeticPostAggregator
+import de.swirtz.ktsrunner.kdruidry.dsl.query.timeseries
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
-class DruidTopNQueryBuilderDSLTests {
+class DruidTimeseriesQueryDSLTests {
 
     @Test
-    fun `topNQuery can be generated`() {
-        val query = topNQuery {
-            dataSource("sample_data")
-            dimension(SimpleDimension("sample_dim"))
-            threshold(5)
-            simpleTopNMetric("count")
-            simpleGranularity(PredefinedGranularity.ALL)
+    fun `timeseries can be generated`() {
+        val query = timeseries("sample_data") {
             andFilter(
                 SelectorFilter("dim1", "some_value"),
                 SelectorFilter("dim2", "some_other_val")
@@ -51,6 +45,8 @@ class DruidTopNQueryBuilderDSLTests {
                     ZonedDateTime.of(2013, 9, 3, 0, 0, 0, 0, ZoneId.systemDefault())
                 )
             )
+            simpleGranularity(PredefinedGranularity.ALL)
+            descending = true
         }
 
         val mapper = jacksonObjectMapper()

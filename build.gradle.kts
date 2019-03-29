@@ -1,4 +1,3 @@
-
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -25,9 +24,6 @@ dependencies {
     implementation(kotlin("reflect", kotlinVersion))
     implementation("org.slf4j:slf4j-api:1.7.14")
     implementation("ch.qos.logback:logback-classic:1.1.3")
-    implementation(kotlin("script-runtime", kotlinVersion))
-    implementation(kotlin("compiler-embeddable", kotlinVersion))
-    implementation(kotlin("script-util", kotlinVersion))
     implementation("in.zapr.druid:druidry:2.13")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.7")
 
@@ -43,41 +39,41 @@ repositories {
 }
 /**
 val sourcesJar by tasks.creating(Jar::class) {
-    classifier = "sources"
-    from(java.sourceSets["main"].allSource)
+classifier = "sources"
+from(java.sourceSets["main"].allSource)
 }
 
 val publicationName = "${artifactID}_pub"
 publishing {
-    publications.invoke {
-        publicationName(MavenPublication::class) {
-            artifactId = artifactID
-            from(components["java"])
-            artifact(sourcesJar)
-        }
-    }
+publications.invoke {
+publicationName(MavenPublication::class) {
+artifactId = artifactID
+from(components["java"])
+artifact(sourcesJar)
+}
+}
 }
 
 fun findProperty(s: String) = project.findProperty(s) as String?
 bintray {
-    user = findProperty("bintrayUser")
-    key = findProperty("bintrayApiKey")
-    publish = true
-    setPublications(publicationName)
-    pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
-        repo = "KtsRunner"
-        name = "KtsRunner"
-        userOrg = "s1m0nw1"
-        websiteUrl = "https://kotlinexpertise.com"
-        githubRepo = "s1monw1/KtsRunner"
-        vcsUrl = "https://github.com/s1monw1/KtsRunner"
-        description = "Library for executing kts files from Kotlin"
-        setLabels("kotlin")
-        setLicenses("MIT")
-        desc = description
-    })
+user = findProperty("bintrayUser")
+key = findProperty("bintrayApiKey")
+publish = true
+setPublications(publicationName)
+pkg(delegateClosureOf<BintrayExtension.PackageConfig> {
+repo = "KtsRunner"
+name = "KtsRunner"
+userOrg = "s1m0nw1"
+websiteUrl = "https://kotlinexpertise.com"
+githubRepo = "s1monw1/KtsRunner"
+vcsUrl = "https://github.com/s1monw1/KtsRunner"
+description = "Library for executing kts files from Kotlin"
+setLabels("kotlin")
+setLicenses("MIT")
+desc = description
+})
 }
-**/
+ **/
 
 tasks {
     withType<KotlinCompile> {
@@ -88,9 +84,9 @@ tasks {
     }
     /**
     withType<GenerateMavenPom> {
-        destination = file("$buildDir/libs/$artifactID.pom")
+    destination = file("$buildDir/libs/$artifactID.pom")
     }
-    **/
+     **/
 
 }
 

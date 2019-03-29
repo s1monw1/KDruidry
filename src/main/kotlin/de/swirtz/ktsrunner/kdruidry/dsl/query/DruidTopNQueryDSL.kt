@@ -1,4 +1,4 @@
-package de.swirtz.ktsrunner.kdruidry.dsl
+package de.swirtz.ktsrunner.kdruidry.dsl.query
 
 import `in`.zapr.druid.druidry.Context
 import `in`.zapr.druid.druidry.Interval
@@ -15,17 +15,21 @@ import `in`.zapr.druid.druidry.postAggregator.DruidPostAggregator
 import `in`.zapr.druid.druidry.query.aggregation.DruidTopNQuery
 import `in`.zapr.druid.druidry.topNMetric.SimpleMetric
 import `in`.zapr.druid.druidry.topNMetric.TopNMetric
+import de.swirtz.ktsrunner.kdruidry.dsl.KDruidryDSL
+import de.swirtz.ktsrunner.kdruidry.dsl.buildNPEAware
 
-fun topNQuery(config: DruidTopNQueryBuilderDSL.() -> Unit): DruidTopNQuery {
-    return DruidTopNQueryBuilderDSL().apply(config).build()
+fun topNQuery(dataSource: String, config: DruidTopNQueryDSL.() -> Unit): DruidTopNQuery {
+    return DruidTopNQueryDSL().apply {
+        config()
+        dataSource(dataSource)
+    }.build()
 }
 
-class DruidTopNQueryBuilderDSL : KDruidryDSL {
-    private val builder = DruidTopNQuery.builder()
+class DruidTopNQueryDSL : KDruidryDSL {
+    private val builder: DruidTopNQuery.DruidTopNQueryBuilder = DruidTopNQuery.builder()
 
     fun simpleDimension(dim: String) = dimension(SimpleDimension(dim)).asUnit()
     fun dimension(dim: DruidDimension) = builder.dimension(dim).asUnit()
-    fun dataSource(ds: String) = builder.dataSource(ds).asUnit()
     fun threshold(th: Int) = builder.threshold(th).asUnit()
     fun topNMetric(m: TopNMetric) = builder.topNMetric(m).asUnit()
     fun simpleTopNMetric(m: String) = topNMetric(SimpleMetric(m)).asUnit()
@@ -37,9 +41,11 @@ class DruidTopNQueryBuilderDSL : KDruidryDSL {
     fun aggregators(vararg agg: DruidAggregator) = builder.aggregators(agg.toList()).asUnit()
     fun postAggregators(vararg pa: DruidPostAggregator) = builder.postAggregators(pa.toList()).asUnit()
     fun intervals(vararg interval: Interval) = builder.intervals(interval.toList()).asUnit()
+
+    fun dataSource(ds: String) = builder.dataSource(ds).asUnit()
     fun context(context: Context) = builder.context(context).asUnit()
 
-    fun build() = builder.build()
+    fun build(): DruidTopNQuery = buildNPEAware { builder.build() }
 }
 
 
