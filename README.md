@@ -74,7 +74,7 @@ timeseries("sample_data") {
     descending = true
 }
 ```
-##Search Query
+## Search Query
 http://druid.io/docs/latest/querying/searchquery.html
 
 ```kotlin
